@@ -1,48 +1,45 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography, useTheme } from '@mui/material';
+
+// Custom reuseable styles
+import { commonFormStyles, commonBoxStyles } from '../style/styles';
 
 const Login = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const formStyles = commonFormStyles(theme);
+  const boxStyles = commonBoxStyles(theme);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       await login(name, email);
-      /** @TODO - explicit check for successful response */
-      navigate('/search'); // Redirect to search page on success
+      navigate('/search');
     } catch (error) {
-      /** @TODO - Implement "Failed Login" display */
-      /** @CONSIDER - Implement Error Boundary */
       console.error('Login failed', error);
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        mt: 8,
-      }}
-    >
-      <Typography variant="h4" mb={2}>
-        Login
-      </Typography>
-      <form onSubmit={handleSubmit}>
+    <Box sx={boxStyles.centerContent}>
+      <Typography variant="h4">Login</Typography>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={formStyles.formContainer}
+      >
         <TextField
           label="Name"
           variant="outlined"
           fullWidth
           value={name}
           onChange={(e) => setName(e.target.value)}
-          margin="normal"
+          sx={formStyles.textField}
           required
         />
         <TextField
@@ -52,13 +49,21 @@ const Login = () => {
           fullWidth
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          margin="normal"
           required
+          sx={{
+            ...formStyles.textField,
+            marginBottom: theme.spacing(3),
+          }}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={formStyles.submitButton}
+        >
           Login
         </Button>
-      </form>
+      </Box>
     </Box>
   );
 };

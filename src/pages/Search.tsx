@@ -1,13 +1,21 @@
-import { LogoutButton } from '../components';
+import { PageHeader } from '../components';
+import { Box, Typography, useTheme } from '@mui/material';
+import { commonBoxStyles } from '../style/styles';
 
-/** @TODO - Implement Searching */
 const Search = () => {
+  const theme = useTheme();
+  const boxStyles = commonBoxStyles(theme);
+
   return (
-    <div>
-      <h1>Search Page</h1>
-      {/** @CONSIDER - Shared navbar w/ logout button */}
-      <LogoutButton></LogoutButton>
-    </div>
+    <>
+      <PageHeader />
+      <Box sx={boxStyles.fullHeightContainer}>
+        <Typography variant="h2">Search for Dogs</Typography>
+        <Typography variant="body1">
+          Explore dogs available for adoption.
+        </Typography>
+      </Box>
+    </>
   );
 };
 

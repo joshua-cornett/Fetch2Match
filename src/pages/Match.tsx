@@ -1,12 +1,11 @@
-import { LogoutButton } from '../components';
+import { PageHeader } from '../components';
 
 /** @TODO - Implement Match return page */
 const Match = () => {
   return (
     <div>
+      <PageHeader></PageHeader>
       <h1>Match Page</h1>
-      {/** @CONSIDER - Shared navbar w/ logout button */}
-      <LogoutButton></LogoutButton>
     </div>
   );
 };
