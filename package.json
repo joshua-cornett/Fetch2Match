@@ -1,5 +1,5 @@
 {
-  "name": "fetch2match",
+  "name": "package.json",
   "homepage": "https://joshua-cornett.github.io/",
   "private": true,
   "version": "0.0.0",
@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d src/dist",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json}'",

@@ -1,5 +1,5 @@
 // React imports
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Context imports
 import ProtectedRoute from './contexts/ProtectedRoute';
@@ -8,7 +8,7 @@ import ProtectedRoute from './contexts/ProtectedRoute';
 import { Login, Search, Match } from './pages';
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         {/* Public Route */}
         <Route path="/" element={<Login />} />
@@ -31,7 +31,7 @@ function App() {
           }
         />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
