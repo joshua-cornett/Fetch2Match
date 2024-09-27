@@ -49,7 +49,7 @@ const base = createTheme({
     h5: {
       fontWeight: 'bold',
       fontSize: '1rem',
-      fontStyle: 'oblique'
+      fontStyle: 'oblique',
     },
   },
   shape: {
