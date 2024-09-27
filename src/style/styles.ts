@@ -58,19 +58,17 @@ export const dogCardStyles = (theme: Theme) => ({
     overflow: 'hidden',
     boxShadow: theme.shadows[5],
     backgroundColor: theme.palette.primary.main,
-    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-    '&:hover, &.favoritedCard': {
+    transition: 'transform 0.3s ease-in-out',
+    '&:hover': {
       transform: 'scale(1.03)',
-      boxShadow: `0 0 15px 3px ${theme.palette.secondary.light}`,
     },
-    '&:hover .cardMedia, &.favoritedCard .cardMedia': {
-      transform: 'translateY(-25px) scale(1.25)',
-      height: 275,
+    '&:hover .cardMedia': {
+      transform: 'translateY(-25px) scale(1.1)',
       objectPosition: 'center',
     },
-    '&:hover .cardContent, &.favoritedCard .cardContent': {
+    '&:hover .cardContent': {
       opacity: 1,
-      transform: 'translateY(0)',
+      marginBottom: 0,
     },
   },
   cardMedia: {
@@ -85,14 +83,14 @@ export const dogCardStyles = (theme: Theme) => ({
   cardContent: {
     color: theme.palette.common.white,
     position: 'absolute',
+    marginBottom: '-75px',
     bottom: 0,
     left: 0,
     right: 0,
     backgroundColor: alpha(theme.palette.primary.light, 0.7),
     padding: theme.spacing(2),
-    opacity: 0,
-    transform: 'translateY(100%)',
-    transition: 'opacity 0.3s ease, transform 0.3s ease',
+    opacity: 1,
+    transition: 'opacity 0.3s ease, transform 0.3s ease, margin 0.3s',
   },
   heartButton: {
     position: 'absolute',
@@ -103,7 +101,7 @@ export const dogCardStyles = (theme: Theme) => ({
     boxShadow: theme.shadows[3],
     '&:hover': {
       backgroundColor: theme.palette.background.paper,
-      color: theme.palette.primary.main,
+      color: theme.palette.secondary.light,
     },
     '&:hover .favoriteIcon': {
       transform: 'scale(1.25)',
@@ -112,6 +110,15 @@ export const dogCardStyles = (theme: Theme) => ({
   },
   favoritedCard: {
     boxShadow: `0 0 10px 3px ${theme.palette.secondary.light}`,
+    transform: 'scale(1.03)',
+    '& .cardContent': {
+      opacity: 1,
+      transform: 'translateY(0)',
+      marginBottom: 0,
+    },
+    '& .cardMedia': {
+      transform: 'translateY(-25px) scale(1.1)',
+    },
   },
   favoriteIcon: {
     fontSize: '1.6rem',

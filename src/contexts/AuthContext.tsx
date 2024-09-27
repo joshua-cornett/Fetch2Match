@@ -29,9 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const checkAuthentication = async () => {
     try {
       // Make a request to a protected endpoint to check if the user is authenticated
-      const response = await fetchAPI.get('/dogs/search', {
-        withCredentials: true,
-      });
+      const response = await fetchAPI.get('/dogs/search');
       // If the request succeeds, the user is authenticated
       if (response.status === 200) {
         setIsAuthenticated(true);
