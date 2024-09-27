@@ -1,19 +1,29 @@
+// React imports
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
+
+// Hook imports
 import { useAuth } from '../hooks';
+
+// MUI imports
 import { Box, Button, TextField, Typography, useTheme } from '@mui/material';
 
-// Custom reuseable styles
+// Style imports
 import { commonFormStyles, commonBoxStyles } from '../style/styles';
 
 const Login = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const formStyles = commonFormStyles(theme);
   const boxStyles = commonBoxStyles(theme);
+
+  // Redirect to search page if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/search" replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,6 +1,11 @@
-import { AppBar, Toolbar, Typography, Box, useTheme } from '@mui/material';
+// Hook imports
 import { useAuth } from '../hooks';
-import LogoutButton from './LogoutButton'; // Import the LogoutButton component
+
+// Component imports
+import LogoutButton from './LogoutButton';
+
+// MUI imports
+import { AppBar, Toolbar, Typography, Box, useTheme } from '@mui/material';
 
 const PageHeader: React.FC = () => {
   const theme = useTheme();
@@ -9,12 +14,13 @@ const PageHeader: React.FC = () => {
   return (
     <AppBar>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        {/* App Name or Logo */}
+        {/* App Name */}
+        {/** @TODO - incorporate logo */}
         <Typography variant="h6" component="div">
           Fetch2Match
         </Typography>
 
-        {/* User Name and Logout Button */}
+        {/* User display and Logout Button */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {user && (
             <Typography variant="body1" sx={{ marginRight: theme.spacing(2) }}>

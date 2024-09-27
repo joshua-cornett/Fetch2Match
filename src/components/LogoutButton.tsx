@@ -1,5 +1,10 @@
-import { useAuth } from '../hooks';
+// React imports
 import { useNavigate } from 'react-router-dom';
+
+// Hook imports
+import { useAuth } from '../hooks';
+
+// MUI Imports
 import { Button } from '@mui/material';
 
 const LogoutButton: React.FC = () => {
@@ -8,7 +13,7 @@ const LogoutButton: React.FC = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/');
+    navigate('/'); // Return to login
   };
 
   return (

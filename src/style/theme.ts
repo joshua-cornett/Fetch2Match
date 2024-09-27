@@ -1,5 +1,8 @@
-import { createTheme } from '@mui/material/styles';
+// Style imports
 import base from './theme-base';
+
+// MUI imports
+import { createTheme } from '@mui/material/styles';
 
 const { palette, typography, spacing } = base;
 
@@ -9,6 +12,7 @@ declare module '@mui/material/Button' {
   }
 }
 
+// Extends the base theme to customize MUI component default styling
 const theme = createTheme(base, {
   components: {
     MuiButton: {

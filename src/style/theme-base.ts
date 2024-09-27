@@ -1,10 +1,10 @@
+// MUI imports
 import { createTheme } from '@mui/material/styles';
 
 // Font imports
 import './fonts.css';
 
 // Type Extensions
-
 declare module '@mui/material/styles' {
   interface Palette {
     tertiary: Palette['primary'];
@@ -15,6 +15,7 @@ declare module '@mui/material/styles' {
   }
 }
 
+// Acts as the base theme, containing hardcoded values
 const base = createTheme({
   palette: {
     primary: {
@@ -44,6 +45,11 @@ const base = createTheme({
     fontFamily: '"Syne", "Roboto", "Helvetica", "Arial", sans-serif',
     button: {
       fontWeight: 600,
+    },
+    h5: {
+      fontWeight: 'bold',
+      fontSize: '1rem',
+      fontStyle: 'oblique'
     },
   },
   shape: {

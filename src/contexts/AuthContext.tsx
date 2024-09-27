@@ -1,4 +1,4 @@
-import axios from 'axios';
+import fetchAPI from '../utils/axiosInstance'; // Import the axios setup
 import { createContext, useState, ReactNode, useEffect } from 'react';
 
 interface AuthContextProps {
@@ -6,6 +6,7 @@ interface AuthContextProps {
   login: (name: string, email: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextProps | undefined>(
@@ -14,25 +15,32 @@ export const AuthContext = createContext<AuthContextProps | undefined>(
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
+    // Retrieve user from localStorage if available
+    () => {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
   );
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user); // Set based on user presence
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
-  // Function to check if user is authenticated by hitting a protected API endpoint
+  // Function to check if the user is authenticated by hitting a protected endpoint
   const checkAuthentication = async () => {
     try {
       // Make a request to a protected endpoint to check if the user is authenticated
-      await axios.get(
-        'https://frontend-take-home-service.fetch.com/dogs/search',
-        {
-          withCredentials: true,
-        }
-      );
-      setIsAuthenticated(true); // Set authentication on success
+      const response = await fetchAPI.get('/dogs/search', {
+        withCredentials: true,
+      });
+      // If the request succeeds, the user is authenticated
+      if (response.status === 200) {
+        setIsAuthenticated(true);
+      }
     } catch (error) {
-      console.error(error);
-      setIsAuthenticated(false); // And also on failure
+      console.error('User is not authenticated:', error);
+      setIsAuthenticated(false); // If the request fails, the user is not authenticated
+    } finally {
+      setIsLoading(false); // End the loading state
     }
   };
 
@@ -43,38 +51,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (name: string, email: string) => {
     try {
-      await axios.post(
-        'https://frontend-take-home-service.fetch.com/auth/login',
-        { name, email },
-        { withCredentials: true } // Cookies get sent with the request
-      );
-
-      // Set user data after successful login
-      setUser({ name, email });
+      await fetchAPI.post('/auth/login', { name, email });
+      const userData = { name, email };
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
     }
   };
 
-  // Logging out invalidates the cookie
   const logout = async () => {
     try {
-      await axios.post(
-        'https://frontend-take-home-service.fetch.com/auth/logout',
-        {},
-        {
-          withCredentials: true, // Ensure the auth cookie is included
-        }
-      );
-      setUser(null); // Clear user data after successful logout
+      await fetchAPI.post('/auth/logout', {});
+      setUser(null);
+      localStorage.removeItem('user');
+      setIsAuthenticated(false);
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, isAuthenticated, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );
