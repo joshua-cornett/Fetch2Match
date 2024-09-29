@@ -16,11 +16,7 @@ const LogoutButton: React.FC = () => {
     navigate('/'); // Return to login
   };
 
-  return (
-    <Button variant="logout" onClick={handleLogout}>
-      Logout
-    </Button>
-  );
+  return <Button onClick={handleLogout}>Logout</Button>;
 };
 
 export default LogoutButton;

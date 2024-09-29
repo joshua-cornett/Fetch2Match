@@ -5,16 +5,18 @@ import { useEffect, useState } from 'react';
 import fetchAPI from '../utils/axiosInstance';
 
 // Component imports
-import { PageHeader, DogCard } from '../components';
+import { PageHeader, DogCard, DogPawLoading } from '../components';
 
 // MUI imports
 import {
   Box,
   Typography,
   useTheme,
-  CircularProgress,
   Grid2,
   Button,
+  Autocomplete,
+  TextField,
+  Chip,
 } from '@mui/material';
 
 // Custom styling imports
@@ -34,23 +36,37 @@ const Search = () => {
   const theme = useTheme();
   const boxStyles = commonBoxStyles(theme);
   //dogs state
+  // Breeds
+  const [breeds, setBreeds] = useState<string[]>([]);
+  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
   //loading state
   const [loading, setLoading] = useState(true);
   //pagination states
   const [nextPageQuery, setNextPageQuery] = useState<string | null>(null);
   const [prevPageQuery, setPrevPageQuery] = useState<string | null>(null);
-  const [pageSize] = useState<number>(25);
+  const [pageSize] = useState<number>(8);
 
-  // Fetch Dogs based on pagination or filters
-  const fetchDogs = async (query?: string) => {
+  // Fetch list of breeds
+  const fetchBreeds = async () => {
+    try {
+      const response = await fetchAPI.get('/dogs/breeds');
+      setBreeds(response.data);
+    } catch (error) {
+      console.error('Failed to fetch breeds:', error);
+    }
+  };
+
+  // Fetch dogs with optional query (pagination or filters)
+  const fetchDogs = async (query?: string, breedsFilter?: string[]) => {
     setLoading(true);
     try {
-      // Fetch Dog IDs
+      // Fetch dog IDs
       const searchResponse = await fetchAPI.get('/dogs/search', {
         params: {
           size: pageSize,
-          ...(query && { from: query }), // Use pagination cursor if provided
+          ...(query && { from: query }), // Use pagination query if available
+          ...(breedsFilter?.length ? { breeds: breedsFilter } : {}),
           sort: 'breed:asc',
         },
       });
@@ -60,8 +76,7 @@ const Search = () => {
       if (dogIds.length > 0) {
         // Fetch full dog details with retrieved IDs
         const dogsResponse = await fetchAPI.post('/dogs', dogIds);
-
-        setDogs(dogsResponse.data); // Save full dog data in state
+        setDogs(dogsResponse.data);
 
         // Extract cursors (does not natively agree with required POST headers)
         const nextCursor = new URLSearchParams(
@@ -70,7 +85,6 @@ const Search = () => {
         const prevCursor = new URLSearchParams(
           searchResponse.data.prev?.split('?')[1]
         ).get('from');
-
         setNextPageQuery(nextCursor);
         setPrevPageQuery(prevCursor);
       } else {
@@ -82,33 +96,38 @@ const Search = () => {
     } catch (error) {
       console.error('Error fetching dogs:', error);
     } finally {
-      setLoading(false); // Set loading state to false after fetching
+      setLoading(false);
     }
   };
 
+  // Initial data fetching
   useEffect(() => {
-    console.log('init search');
-    fetchDogs(); // Fetch initial data on component mount
+    fetchBreeds();
+    fetchDogs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /** HANDLERS */
+
+  // Handle breed selection change
+  const handleBreedChange = (_event: React.SyntheticEvent, value: string[]) => {
+    setSelectedBreeds(value);
+    fetchDogs(undefined, value); // also resets pagination
+  };
 
   // Handler for next page
   const handleNextPage = () => {
     if (nextPageQuery) {
-      fetchDogs(nextPageQuery);
+      fetchDogs(nextPageQuery, selectedBreeds);
     }
   };
 
   // Handler for previous page
   const handlePrevPage = () => {
     if (prevPageQuery) {
-      fetchDogs(prevPageQuery);
+      fetchDogs(prevPageQuery, selectedBreeds);
     }
   };
-
-  if (loading) {
-    return <Typography variant="h4">Loading...</Typography>;
-  }
 
   return (
     <>
@@ -122,11 +141,78 @@ const Search = () => {
         <Typography variant="body1" color={theme.palette.text.secondary}>
           Explore dogs available for adoption.
         </Typography>
-        {loading ? (
-          <CircularProgress />
-        ) : (
-          <>
-            {/* Actual Dog content */}
+        {/* Breed filter */}
+        <Autocomplete
+          multiple
+          options={breeds}
+          getOptionLabel={(option) => option}
+          value={selectedBreeds}
+          onChange={handleBreedChange}
+          renderTags={(value: string[], getTagProps) => (
+            <div style={{ width: '100%' }}>
+              {value.map((option: string, index: number) => (
+                <Chip label={option} {...getTagProps({ index })} />
+              ))}
+            </div>
+          )}
+          renderInput={(params) => (
+            <TextField
+              sx={{
+                paddingTop: 1,
+                // Make filter text and outlines white
+                '& .MuiInputLabel-root': {
+                  color: 'white',
+                  fontSize: 24,
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'white',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'white',
+                  },
+                  svg: {
+                    color: 'white',
+                  },
+                },
+                span: {
+                  fontSize: 20,
+                  color: 'white',
+                },
+                input: {
+                  '&::placeholder': {
+                    opacity: 1,
+                    color: theme.palette.secondary.light,
+                  },
+                },
+                '& .MuiAutocomplete-tag': {
+                  color: 'white',
+                },
+              }}
+              {...params}
+              label="Filter by Breed"
+              placeholder="search and select breeds..."
+            />
+          )}
+          sx={{
+            marginBottom: theme.spacing(2),
+            minWidth: 300,
+            maxWidth: 'max-content',
+          }}
+        />
+
+        <Box
+          sx={{
+            position: 'relative',
+            minHeight: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {loading ? (
+            <DogPawLoading />
+          ) : (
             <Grid2 container spacing={3} rowSpacing={3}>
               {dogs.map((dog: Dog) => (
                 <Grid2 key={dog.id} size={{ xs: 6, sm: 4, md: 3 }}>
@@ -134,33 +220,33 @@ const Search = () => {
                 </Grid2>
               ))}
             </Grid2>
-            {/* Pagination buttons */}
-            {/** @TODO - Abstract away styling into another box style */}
-            {/** @CONSIDER - Arrow button cursors on sides instead to simulate a carousel */}
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: theme.spacing(4),
-              }}
-            >
-              <Button
-                variant="contained"
-                onClick={handlePrevPage}
-                disabled={!prevPageQuery}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleNextPage}
-                disabled={!nextPageQuery}
-              >
-                Next
-              </Button>
-            </Box>
-          </>
-        )}
+          )}
+        </Box>
+        {/* Pagination buttons */}
+        {/** @TODO - Abstract away styling into another box style */}
+        {/** @CONSIDER - Arrow button cursors on sides instead to simulate a carousel */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: theme.spacing(4),
+          }}
+        >
+          <Button
+            variant="light"
+            onClick={handlePrevPage}
+            disabled={!prevPageQuery || loading}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="light"
+            onClick={handleNextPage}
+            disabled={!nextPageQuery || loading}
+          >
+            Next
+          </Button>
+        </Box>
       </Box>
     </>
   );

@@ -8,7 +8,7 @@ const { palette, typography, spacing } = base;
 
 declare module '@mui/material/Button' {
   interface ButtonPropsVariantOverrides {
-    logout: true;
+    light: true;
   }
 }
 
@@ -29,12 +29,12 @@ const theme = createTheme(base, {
       },
       variants: [
         {
-          props: { variant: 'logout' },
+          props: { variant: 'light' },
           style: {
             backgroundColor: palette.secondary.light,
             color: palette.text.primary,
             '&:hover': {
-              backgroundColor: palette.primary.main,
+              backgroundColor: palette.primary.light,
               color: palette.text.secondary,
             },
           },

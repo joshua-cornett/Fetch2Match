@@ -1,13 +1,13 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks';
-import { LoadingBar } from '../components';
+import { DogPawLoading } from '../components';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   // Display the LoadingBar component while the authentication check is in progress
   if (isLoading) {
-    return <LoadingBar />;
+    return <DogPawLoading />;
   }
 
   // If user is not authenticated, redirect to login page
