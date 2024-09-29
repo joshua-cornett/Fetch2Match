@@ -8,7 +8,14 @@ import fetchAPI from '../utils/axiosInstance';
 import { PageHeader, DogCard } from '../components';
 
 // MUI imports
-import { Box, Typography, useTheme, Grid2 } from '@mui/material';
+import {
+  Box,
+  Typography,
+  useTheme,
+  CircularProgress,
+  Grid2,
+  Button,
+} from '@mui/material';
 
 // Custom styling imports
 import { commonBoxStyles } from '../style/styles';
@@ -23,37 +30,84 @@ interface Dog {
 }
 
 const Search = () => {
+  //style context
   const theme = useTheme();
   const boxStyles = commonBoxStyles(theme);
+  //dogs state
   const [dogs, setDogs] = useState<Dog[]>([]);
+  //loading state
   const [loading, setLoading] = useState(true);
+  //pagination states
+  const [nextPageQuery, setNextPageQuery] = useState<string | null>(null);
+  const [prevPageQuery, setPrevPageQuery] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [currentPageQuery, setCurrentPageQuery] = useState<string | null>(null);
+  const [pageSize] = useState<number>(25);
 
-  // Fetch Dogs on page load
-  useEffect(() => {
-    const fetchDogs = async () => {
-      try {
-        // Fetch dogs from the /dogs/search endpoint
-        const response = await fetchAPI.get('/dogs/search', {
-          params: {
-            size: 25 /** @TODO - Temporary limit. Will need to remove for pagination implementation. */,
-          },
-        });
+  // Fetch Dogs based on pagination or filters
+  const fetchDogs = async (query?: string) => {
+    setLoading(true);
+    try {
+      // Fetch Dog IDs
+      const searchResponse = await fetchAPI.get('/dogs/search', {
+        params: {
+          size: pageSize,
+          ...(query && { from: query }), // Use pagination cursor if provided
+          sort: 'breed:asc',
+        },
+      });
 
-        // Assuming the API returns dog IDs, fetch full details using /dogs endpoint
-        const dogIds = response.data.resultIds;
-        if (dogIds.length > 0) {
-          const dogsResponse = await fetchAPI.post('/dogs', dogIds);
-          setDogs(dogsResponse.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch dogs:', error);
-      } finally {
-        setLoading(false);
+      const dogIds = searchResponse.data.resultIds;
+
+      if (dogIds.length > 0) {
+        // Fetch full dog details with retrieved IDs
+        const dogsResponse = await fetchAPI.post('/dogs', dogIds);
+
+        setDogs(dogsResponse.data); // Save full dog data in state
+
+        // Extract cursors (does not natively agree with required POST headers)
+        const nextCursor = new URLSearchParams(
+          searchResponse.data.next.split('?')[1]
+        ).get('from');
+        const prevCursor = new URLSearchParams(
+          searchResponse.data.prev?.split('?')[1]
+        ).get('from');
+
+        setNextPageQuery(nextCursor);
+        setPrevPageQuery(prevCursor);
+        setCurrentPageQuery(query || null);
+      } else {
+        console.log(
+          'No dogs found'
+        ); /** @TODO - Create meaningful alert for user */
+        setDogs([]);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching dogs:', error);
+    } finally {
+      setLoading(false); // Set loading state to false after fetching
+    }
+  };
 
-    fetchDogs();
+  useEffect(() => {
+    console.log('init search');
+    fetchDogs(); // Fetch initial data on component mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Handler for next page
+  const handleNextPage = () => {
+    if (nextPageQuery) {
+      fetchDogs(nextPageQuery);
+    }
+  };
+
+  // Handler for previous page
+  const handlePrevPage = () => {
+    if (prevPageQuery) {
+      fetchDogs(prevPageQuery);
+    }
+  };
 
   if (loading) {
     return <Typography variant="h4">Loading...</Typography>;
@@ -71,14 +125,45 @@ const Search = () => {
         <Typography variant="body1" color={theme.palette.text.secondary}>
           Explore dogs available for adoption.
         </Typography>
-        {/* Actual Dog content */}
-        <Grid2 container spacing={3} rowSpacing={3}>
-          {dogs.map((dog) => (
-            <Grid2 key={dog.id} size={{ xs: 6, sm: 4, md: 3 }}>
-              <DogCard dog={dog} />
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <>
+            {/* Actual Dog content */}
+            <Grid2 container spacing={3} rowSpacing={3}>
+              {dogs.map((dog: Dog) => (
+                <Grid2 key={dog.id} size={{ xs: 6, sm: 4, md: 3 }}>
+                  <DogCard dog={dog} />
+                </Grid2>
+              ))}
             </Grid2>
-          ))}
-        </Grid2>
+            {/* Pagination buttons */}
+            {/** @TODO - Abstract away styling into another box style */}
+            {/** @CONSIDER - Arrow button cursors on sides instead to simulate a carousel */}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: theme.spacing(4),
+              }}
+            >
+              <Button
+                variant="contained"
+                onClick={handlePrevPage}
+                disabled={!prevPageQuery}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleNextPage}
+                disabled={!nextPageQuery}
+              >
+                Next
+              </Button>
+            </Box>
+          </>
+        )}
       </Box>
     </>
   );
