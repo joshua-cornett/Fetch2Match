@@ -40,8 +40,6 @@ const Search = () => {
   //pagination states
   const [nextPageQuery, setNextPageQuery] = useState<string | null>(null);
   const [prevPageQuery, setPrevPageQuery] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [currentPageQuery, setCurrentPageQuery] = useState<string | null>(null);
   const [pageSize] = useState<number>(25);
 
   // Fetch Dogs based on pagination or filters
@@ -75,7 +73,6 @@ const Search = () => {
 
         setNextPageQuery(nextCursor);
         setPrevPageQuery(prevCursor);
-        setCurrentPageQuery(query || null);
       } else {
         console.log(
           'No dogs found'
