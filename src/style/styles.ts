@@ -4,13 +4,21 @@ import { Theme, alpha } from '@mui/material/styles';
 
 // Box styling
 export const commonBoxStyles = (theme: Theme) => ({
+  headerBox: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(4),
+    '& h2': {
+      color: theme.palette.secondary.light,
+    },
+    '& p': {
+      color: theme.palette.text.secondary,
+    },
+  },
   centerContent: {
     display: 'flex',
-    flexBasis: '100dvw',
-    flex: '1 1 auto',
-    flexDirection: 'column',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
     minHeight: '100vh',
     padding: theme.spacing(4),
   },
@@ -22,6 +30,15 @@ export const commonBoxStyles = (theme: Theme) => ({
     marginTop: '10dvh',
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gridContainer: {
+    position: 'relative',
+    minHeight: '400px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -30,10 +47,12 @@ export const commonFormStyles = (theme: Theme) => ({
   formContainer: {
     display: 'flex',
     flexDirection: 'column',
-    minWidth: '100px',
     width: '100%',
     maxWidth: '400px',
     marginBottom: theme.spacing(3),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(2),
+    },
   },
   textField: {
     marginBottom: theme.spacing(2),
@@ -44,7 +63,6 @@ export const commonFormStyles = (theme: Theme) => ({
   submitButton: {
     padding: theme.spacing(1.5, 3),
     borderRadius: theme.shape.borderRadius,
-    fontWeight: theme.typography.button.fontWeight,
     width: '100%',
   },
 });
@@ -53,8 +71,10 @@ export const commonFormStyles = (theme: Theme) => ({
 export const dogCardStyles = (theme: Theme) => ({
   cardContainer: {
     position: 'relative',
-    height: 250,
-    maxWidth: 200,
+    height: 300,
+    width: 250,
+    maxWidth: 300,
+    flexGrow: 1,
     overflow: 'hidden',
     boxShadow: theme.shadows[5],
     backgroundColor: theme.palette.primary.main,
@@ -63,17 +83,22 @@ export const dogCardStyles = (theme: Theme) => ({
       transform: 'scale(1.03)',
     },
     '&:hover .cardMedia': {
-      transform: 'translateY(-25px) scale(1.1)',
+      transform: 'translateY(-15px) scale(1.1)',
       objectPosition: 'center',
     },
     '&:hover .cardContent': {
-      opacity: 1,
-      marginBottom: 0,
+      transform: 'translateY(-100%)',
+      top: '100%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      minWidth: '300px',
     },
   },
   cardMedia: {
-    maxWidth: 250,
+    maxWidth: 300,
     minWidth: 250,
+    minHeight: 200,
+    maxHeight: 300,
     height: 300,
     objectFit: 'cover',
     objectPosition: 'center',
@@ -83,14 +108,12 @@ export const dogCardStyles = (theme: Theme) => ({
   cardContent: {
     color: theme.palette.common.white,
     position: 'absolute',
-    marginBottom: '-75px',
-    bottom: 0,
+    top: '255px',
     left: 0,
     right: 0,
     backgroundColor: alpha(theme.palette.primary.light, 0.7),
     padding: theme.spacing(2),
-    opacity: 1,
-    transition: 'opacity 0.3s ease, transform 0.3s ease, margin 0.3s',
+    transition: 'transform 0.3s ease, top 0.3s ease',
   },
   heartButton: {
     position: 'absolute',
@@ -112,12 +135,11 @@ export const dogCardStyles = (theme: Theme) => ({
     boxShadow: `0 0 10px 3px ${theme.palette.secondary.light}`,
     transform: 'scale(1.03)',
     '& .cardContent': {
-      opacity: 1,
-      transform: 'translateY(0)',
-      marginBottom: 0,
+      transform: 'translateY(-100%)',
+      top: '100%',
     },
     '& .cardMedia': {
-      transform: 'translateY(-25px) scale(1.1)',
+      transform: 'translateY(-15px) scale(1.1)',
     },
   },
   favoriteIcon: {
@@ -149,5 +171,57 @@ export const dogCardStyles = (theme: Theme) => ({
         boxShadow: `0 0 5px 2px ${theme.palette.secondary.light}`,
       },
     },
+  },
+});
+
+export const searchPageStyles = (theme: Theme) => ({
+  filterSortBox: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(3),
+    gap: theme.spacing(2),
+    [theme.breakpoints.down('md')]: {
+      flexWrap: 'wrap',
+      alignItems: 'center',
+    },
+  },
+  paginationBox: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: theme.spacing(4),
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'center',
+      gap: theme.spacing(2),
+    },
+  },
+});
+
+export const favoritesPageStyles = (theme: Theme) => ({
+  noFavoritesText: {
+    textAlign: 'center',
+    color: theme.palette.text.primary,
+    marginTop: theme.spacing(3),
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '50%',
+    alignSelf: 'center',
+    marginTop: theme.spacing(4),
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      gap: theme.spacing(2),
+      width: '80%',
+    },
+  },
+});
+
+export const matchPageStyles = (theme: Theme) => ({
+  buttonContainer: {
+    display: 'flex',
+    minWidth: 'max-content',
+    justifyContent: 'center',
+    marginTop: theme.spacing(4),
   },
 });

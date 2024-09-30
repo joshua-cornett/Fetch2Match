@@ -17,6 +17,15 @@ declare module '@mui/material/styles' {
 
 // Acts as the base theme, containing hardcoded values
 const base = createTheme({
+  breakpoints: {
+    values: {
+      xs: 300,
+      sm: 450,
+      md: 767,
+      lg: 1200,
+      xl: 1500,
+    },
+  },
   palette: {
     primary: {
       main: '#5F259F',

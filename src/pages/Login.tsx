@@ -60,10 +60,7 @@ const Login = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          sx={{
-            ...formStyles.textField,
-            marginBottom: theme.spacing(3),
-          }}
+          sx={formStyles.textField}
         />
         <Button
           type="submit"

@@ -12,7 +12,7 @@ import { DogCard, DogPawLoading, PageHeader } from '../components';
 import { Box, Typography, useTheme } from '@mui/material';
 
 // Custom styling imports
-import { commonBoxStyles } from '../style/styles';
+import { commonBoxStyles, matchPageStyles } from '../style/styles';
 import { StaticNavigator } from '../components';
 
 interface Dog {
@@ -27,6 +27,7 @@ interface Dog {
 const Match = () => {
   const theme = useTheme();
   const boxStyles = commonBoxStyles(theme);
+  const matchStyles = matchPageStyles(theme);
   const { matchedDogId } = useParams();
   console.log(matchedDogId);
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
@@ -53,21 +54,25 @@ const Match = () => {
     <>
       <PageHeader />
       <Box sx={boxStyles.fullHeightContainer}>
-        <Typography variant="h2" color={theme.palette.secondary.light}>
-          Your Matched Dog
-        </Typography>
+        <Box sx={matchStyles.headerBox}>
+          <Typography variant="h2" color={theme.palette.secondary.light}>
+            Your Matched Dog
+          </Typography>
+        </Box>
 
         {loading ? (
           <DogPawLoading />
         ) : (
           matchedDog && (
-            <Box sx={{ marginTop: theme.spacing(4) }}>
+            <Box sx={matchStyles.dogCardContainer}>
               <DogCard dog={matchedDog} />
             </Box>
           )
         )}
         {/* Back to Search Button */}
-        <StaticNavigator to="search" text="Back to Search" />
+        <Box sx={matchStyles.buttonContainer}>
+          <StaticNavigator to="search" text="Back to Search" />
+        </Box>
       </Box>
     </>
   );

@@ -18,12 +18,18 @@ const theme = createTheme(base, {
     MuiButton: {
       styleOverrides: {
         root: {
-          backgroundColor: palette.primary.main,
-          color: palette.text.secondary,
-          padding: spacing(1.5, 3),
+          minWidth: 'max-content',
+          backgroundColor: base.palette.primary.main,
+          color: base.palette.text.secondary,
+          padding: base.spacing(1.5, 3),
           '&:hover': {
-            backgroundColor: palette.secondary.light,
-            color: palette.text.primary,
+            backgroundColor: base.palette.secondary.light,
+            color: base.palette.text.primary,
+          },
+          width: '100%',
+          height: '48px',
+          '@media (min-width:600px)': {
+            width: 'auto',
           },
         },
       },
@@ -31,11 +37,11 @@ const theme = createTheme(base, {
         {
           props: { variant: 'light' },
           style: {
-            backgroundColor: palette.secondary.light,
-            color: palette.text.primary,
+            backgroundColor: base.palette.secondary.light,
+            color: base.palette.text.primary,
             '&:hover': {
-              backgroundColor: palette.primary.light,
-              color: palette.text.secondary,
+              backgroundColor: base.palette.primary.light,
+              color: base.palette.text.secondary,
             },
           },
         },

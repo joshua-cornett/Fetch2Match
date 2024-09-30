@@ -18,7 +18,7 @@ import {
 import { Box, Typography, useTheme, Grid2, Button } from '@mui/material';
 
 // Custom styling imports
-import { commonBoxStyles } from '../style/styles';
+import { commonBoxStyles, searchPageStyles } from '../style/styles';
 
 interface Dog {
   id: string;
@@ -33,6 +33,7 @@ const Search = () => {
   //style context
   const theme = useTheme();
   const boxStyles = commonBoxStyles(theme);
+  const searchStyles = searchPageStyles(theme);
 
   //dogs state
   const [breeds, setBreeds] = useState<string[]>([]);
@@ -153,24 +154,18 @@ const Search = () => {
       <PageHeader />
       <Box sx={boxStyles.fullHeightContainer}>
         {/* Main page attention grabber */}
-        <Typography variant="h2" color={theme.palette.secondary.light}>
-          Search for Dogs
-        </Typography>
-        {/* Description of function for user */}
-        <Typography variant="body1" color={theme.palette.text.secondary}>
-          Explore dogs available for adoption.
-        </Typography>
+        <Box sx={boxStyles.headerBox}>
+          <Typography variant="h2" color={theme.palette.secondary.light}>
+            Search for Dogs
+          </Typography>
+          {/* Description of function for user */}
+          <Typography variant="body1" color={theme.palette.text.secondary}>
+            Explore dogs available for adoption.
+          </Typography>
+        </Box>
 
         {/* Filter, Sort, and View Favorites options */}
-        <Box
-          sx={{
-            mt: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 2,
-          }}
-        >
+        <Box sx={searchStyles.filterSortBox}>
           <BreedFilter
             breeds={breeds}
             selectedBreeds={selectedBreeds}
@@ -180,21 +175,13 @@ const Search = () => {
           <StaticNavigator to="favorites" text="View Favorites" />
         </Box>
         {/* Loading Animation and Dogs */}
-        <Box
-          sx={{
-            position: 'relative',
-            minHeight: '400px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+        <Box sx={boxStyles.gridContainer}>
           {loading ? (
             <DogPawLoading />
           ) : (
-            <Grid2 container spacing={3} rowSpacing={3}>
+            <Grid2 container spacing={3}>
               {dogs.map((dog: Dog) => (
-                <Grid2 key={dog.id} size={{ xs: 6, sm: 4, md: 3 }}>
+                <Grid2 key={dog.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                   <DogCard dog={dog} />
                 </Grid2>
               ))}
@@ -203,13 +190,7 @@ const Search = () => {
         </Box>
 
         {/* Pagination Buttons */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: theme.spacing(4),
-          }}
-        >
+        <Box sx={searchStyles.paginationBox}>
           <Button
             variant="light"
             onClick={handlePrevPage}
