@@ -21,9 +21,24 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/favorites" element={<Favorites />} />{' '}
         <Route
-          path="/match"
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <Search />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute>
+              <Favorites />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/match/:matchedDogId"
           element={
             <ProtectedRoute>
               <Match />

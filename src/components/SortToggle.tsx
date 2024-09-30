@@ -33,7 +33,7 @@ const SortToggle: React.FC<SortToggleProps> = ({ sortOrder, onSortChange }) => {
         Sort Method:
       </Typography>
       <Button
-        variant="outlined"
+        variant="light"
         startIcon={sortOrder === 'desc' ? <ArrowUpward /> : <ArrowDownward />}
         onClick={handleToggle}
       />

@@ -11,7 +11,7 @@ import {
   SortToggle,
   BreedFilter,
   DogPawLoading,
-  FavoritesButton,
+  StaticNavigator,
 } from '../components';
 
 // MUI imports
@@ -177,9 +177,9 @@ const Search = () => {
             onBreedChange={handleBreedChange}
           />
           <SortToggle sortOrder={sortOrder} onSortChange={handleSortChange} />
-          <FavoritesButton />
+          <StaticNavigator to="favorites" text="View Favorites" />
         </Box>
-        {/** Loading Animation */}
+        {/* Loading Animation and Dogs */}
         <Box
           sx={{
             position: 'relative',
@@ -189,7 +189,6 @@ const Search = () => {
             alignItems: 'center',
           }}
         >
-          {/* Loading Animation and Dogs */}
           {loading ? (
             <DogPawLoading />
           ) : (
