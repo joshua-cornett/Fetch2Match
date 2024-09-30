@@ -1,5 +1,7 @@
+// MUI imports
 import { Button, Box, Typography } from '@mui/material';
 import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
+// Style imports
 import theme from '../style/theme';
 
 interface SortToggleProps {

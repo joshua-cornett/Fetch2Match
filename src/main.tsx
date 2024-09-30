@@ -2,7 +2,7 @@
 import { createRoot } from 'react-dom/client';
 
 // Context imports
-import { AuthProvider } from './contexts';
+import { AuthProvider, FavoritesProvider } from './contexts';
 
 // Style imports
 import theme from './style/theme.ts';
@@ -18,7 +18,9 @@ createRoot(document.getElementById('root') as HTMLElement).render(
   <ThemeProvider theme={theme}>
     <CssBaseline />
     <AuthProvider>
-      <App />
+      <FavoritesProvider>
+        <App />
+      </FavoritesProvider>
     </AuthProvider>
   </ThemeProvider>
 );

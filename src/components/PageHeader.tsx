@@ -2,7 +2,7 @@
 import { useAuth } from '../hooks';
 
 // Component imports
-import LogoutButton from './LogoutButton';
+import { LogoutButton } from '.';
 
 // MUI imports
 import { AppBar, Toolbar, Typography, Box, useTheme } from '@mui/material';

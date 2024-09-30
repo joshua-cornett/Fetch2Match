@@ -5,14 +5,13 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './contexts/ProtectedRoute';
 
 // Page imports
-import { Login, Search, Match } from './pages';
+import { Login, Search, Favorites, Match } from './pages';
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public Route */}
         <Route path="/" element={<Login />} />
-
         {/* Protected Routes */}
         <Route
           path="/search"
@@ -22,6 +21,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/favorites" element={<Favorites />} />{' '}
         <Route
           path="/match"
           element={

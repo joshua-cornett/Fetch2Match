@@ -11,6 +11,7 @@ import {
   SortToggle,
   BreedFilter,
   DogPawLoading,
+  FavoritesButton,
 } from '../components';
 
 // MUI imports
@@ -160,9 +161,10 @@ const Search = () => {
           Explore dogs available for adoption.
         </Typography>
 
-        {/* Filter and Sort */}
+        {/* Filter, Sort, and View Favorites options */}
         <Box
           sx={{
+            mt: '40px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -175,6 +177,7 @@ const Search = () => {
             onBreedChange={handleBreedChange}
           />
           <SortToggle sortOrder={sortOrder} onSortChange={handleSortChange} />
+          <FavoritesButton />
         </Box>
         {/** Loading Animation */}
         <Box
@@ -186,6 +189,7 @@ const Search = () => {
             alignItems: 'center',
           }}
         >
+          {/* Loading Animation and Dogs */}
           {loading ? (
             <DogPawLoading />
           ) : (

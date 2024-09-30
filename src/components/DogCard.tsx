@@ -12,7 +12,11 @@ import FavoriteIcon from '@mui/icons-material/Favorite'; // Filled heart for the
 
 // Styling imports
 import { dogCardStyles } from '../style/styles';
-import { useState } from 'react';
+
+// Context imports
+import { useFavorites } from '../hooks';
+
+// Type definitions ...
 
 interface Dog {
   id: string;
@@ -25,27 +29,30 @@ interface Dog {
 
 interface DogCardProps {
   dog: Dog;
-  onFavorite?: (id: string) => void; // Favorite handler
 }
 
 // DogCard Component
-const DogCard: React.FC<DogCardProps> = ({ dog, onFavorite }) => {
+const DogCard: React.FC<DogCardProps> = ({ dog }) => {
   const theme = useTheme();
   const styles = dogCardStyles(theme);
 
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { addFavorite, removeFavorite, isFavorited } = useFavorites();
+  const favorited = isFavorited(dog.id);
 
   // Toggle favorite
   const handleFavoriteClick = () => {
-    setIsFavorited(!isFavorited);
-    onFavorite?.(dog.id); // Call the favorite handler if provided
+    if (favorited) {
+      removeFavorite(dog.id);
+    } else {
+      addFavorite(dog.id);
+    }
   };
 
   return (
     <Card
       sx={{
         ...styles.cardContainer,
-        ...(isFavorited
+        ...(favorited
           ? styles.favoritedCard
           : styles.cardContainerHoveredNotFavorited),
       }}
@@ -77,7 +84,7 @@ const DogCard: React.FC<DogCardProps> = ({ dog, onFavorite }) => {
         className={!isFavorited ? 'heartButtonNotFavorited' : ''} // Animation when not favorited (entices user to click)
         onClick={handleFavoriteClick}
       >
-        {isFavorited ? (
+        {favorited ? (
           <FavoriteIcon className="favoritedIcon" sx={styles.favoritedIcon} /> // Filled heart when favorited
         ) : (
           <FavoriteBorderIcon
