@@ -5,19 +5,16 @@ import { useEffect, useState } from 'react';
 import fetchAPI from '../utils/axiosInstance';
 
 // Component imports
-import { PageHeader, DogCard, DogPawLoading } from '../components';
+import {
+  PageHeader,
+  DogCard,
+  SortToggle,
+  BreedFilter,
+  DogPawLoading,
+} from '../components';
 
 // MUI imports
-import {
-  Box,
-  Typography,
-  useTheme,
-  Grid2,
-  Button,
-  Autocomplete,
-  TextField,
-  Chip,
-} from '@mui/material';
+import { Box, Typography, useTheme, Grid2, Button } from '@mui/material';
 
 // Custom styling imports
 import { commonBoxStyles } from '../style/styles';
@@ -35,17 +32,22 @@ const Search = () => {
   //style context
   const theme = useTheme();
   const boxStyles = commonBoxStyles(theme);
+
   //dogs state
-  // Breeds
   const [breeds, setBreeds] = useState<string[]>([]);
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
+
   //loading state
   const [loading, setLoading] = useState(true);
+
   //pagination states
   const [nextPageQuery, setNextPageQuery] = useState<string | null>(null);
   const [prevPageQuery, setPrevPageQuery] = useState<string | null>(null);
   const [pageSize] = useState<number>(8);
+
+  //sorting state
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   // Fetch list of breeds
   const fetchBreeds = async () => {
@@ -57,9 +59,15 @@ const Search = () => {
     }
   };
 
-  // Fetch dogs with optional query (pagination or filters)
-  const fetchDogs = async (query?: string, breedsFilter?: string[]) => {
+  // Fetch dogs (with or without query)
+  const fetchDogs = async (
+    query?: string,
+    breedsFilter?: string[],
+    sortOrder?: string
+  ) => {
     setLoading(true);
+    setDogs([]); // Clear the dog list to prevent showing old data
+
     try {
       // Fetch dog IDs
       const searchResponse = await fetchAPI.get('/dogs/search', {
@@ -67,7 +75,7 @@ const Search = () => {
           size: pageSize,
           ...(query && { from: query }), // Use pagination query if available
           ...(breedsFilter?.length ? { breeds: breedsFilter } : {}),
-          sort: 'breed:asc',
+          sort: `breed:${sortOrder}`, // Sorting order
         },
       });
 
@@ -103,29 +111,39 @@ const Search = () => {
   // Initial data fetching
   useEffect(() => {
     fetchBreeds();
-    fetchDogs();
+    fetchDogs(undefined, [], sortOrder);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /** HANDLERS */
 
+  // Breed Filtering and Sorting ...
+
   // Handle breed selection change
   const handleBreedChange = (_event: React.SyntheticEvent, value: string[]) => {
     setSelectedBreeds(value);
-    fetchDogs(undefined, value); // also resets pagination
+    fetchDogs(undefined, value, sortOrder);
   };
+
+  // Handle sort order change
+  const handleSortChange = (newSortOrder: 'asc' | 'desc') => {
+    setSortOrder(newSortOrder);
+    fetchDogs(undefined, selectedBreeds, newSortOrder);
+  };
+
+  // Pagination ...
 
   // Handler for next page
   const handleNextPage = () => {
     if (nextPageQuery) {
-      fetchDogs(nextPageQuery, selectedBreeds);
+      fetchDogs(nextPageQuery, selectedBreeds, sortOrder);
     }
   };
 
   // Handler for previous page
   const handlePrevPage = () => {
     if (prevPageQuery) {
-      fetchDogs(prevPageQuery, selectedBreeds);
+      fetchDogs(prevPageQuery, selectedBreeds, sortOrder);
     }
   };
 
@@ -141,66 +159,24 @@ const Search = () => {
         <Typography variant="body1" color={theme.palette.text.secondary}>
           Explore dogs available for adoption.
         </Typography>
-        {/* Breed filter */}
-        <Autocomplete
-          multiple
-          options={breeds}
-          getOptionLabel={(option) => option}
-          value={selectedBreeds}
-          onChange={handleBreedChange}
-          renderTags={(value: string[], getTagProps) => (
-            <div style={{ width: '100%' }}>
-              {value.map((option: string, index: number) => (
-                <Chip label={option} {...getTagProps({ index })} />
-              ))}
-            </div>
-          )}
-          renderInput={(params) => (
-            <TextField
-              sx={{
-                paddingTop: 1,
-                // Make filter text and outlines white
-                '& .MuiInputLabel-root': {
-                  color: 'white',
-                  fontSize: 24,
-                },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: 'white',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'white',
-                  },
-                  svg: {
-                    color: 'white',
-                  },
-                },
-                span: {
-                  fontSize: 20,
-                  color: 'white',
-                },
-                input: {
-                  '&::placeholder': {
-                    opacity: 1,
-                    color: theme.palette.secondary.light,
-                  },
-                },
-                '& .MuiAutocomplete-tag': {
-                  color: 'white',
-                },
-              }}
-              {...params}
-              label="Filter by Breed"
-              placeholder="search and select breeds..."
-            />
-          )}
-          sx={{
-            marginBottom: theme.spacing(2),
-            minWidth: 300,
-            maxWidth: 'max-content',
-          }}
-        />
 
+        {/* Filter and Sort */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 2,
+          }}
+        >
+          <BreedFilter
+            breeds={breeds}
+            selectedBreeds={selectedBreeds}
+            onBreedChange={handleBreedChange}
+          />
+          <SortToggle sortOrder={sortOrder} onSortChange={handleSortChange} />
+        </Box>
+        {/** Loading Animation */}
         <Box
           sx={{
             position: 'relative',
@@ -222,9 +198,8 @@ const Search = () => {
             </Grid2>
           )}
         </Box>
-        {/* Pagination buttons */}
-        {/** @TODO - Abstract away styling into another box style */}
-        {/** @CONSIDER - Arrow button cursors on sides instead to simulate a carousel */}
+
+        {/* Pagination Buttons */}
         <Box
           sx={{
             display: 'flex',
