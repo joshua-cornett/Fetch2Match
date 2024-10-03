@@ -27,7 +27,7 @@ Welcome to **Fetch2Match**! This project is a website for dog lovers to search t
 ## Live Demo
 
 You can view the live demo of the site here:  
-**[Fetch2Match Demo](https://your-username.github.io/fetch2match/)**
+**[Fetch2Match Demo](https://joshua-cornett.github.io/fetch2match/)**
 
 ## Screenshots
 
