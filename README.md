@@ -2,6 +2,8 @@
 
 Welcome to **Fetch2Match**! This project is a website for dog lovers to search through a database of shelter dogs, with the hope of finding a new home for these dogs. Users can filter by breed, paginate through the results, sort the list, and add dogs to their favorites for matching.
 
+### _NOTE: This is part of a frontend exercise given to me by FetchRewards. The API that this is linked to is theirs, while the frontend is of my design and development._
+
 ## Table of Contents
 
 - [Features](#features)
